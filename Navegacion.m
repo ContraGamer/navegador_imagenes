@@ -92,6 +92,66 @@ for R = 1:dimen(1)
     end 
 end
 
+L = bwlabel(im_skel,8);
+[r, c] = find(L==1); rc = [c r];
+
+dimen=size(rc);
+
+%find(rc(:)==puntox2 & rc(dimen(2)+:)==puntoy2)
+% valor1X=0;
+% valor1Y=0;
+% 
+% valor2X=0;
+% valor2Y=0;
+% for(i=1:dimen(1))
+%     for(j=1:dimen(2))
+%         if(rc(i)==puntox1 & rc(dimen(1)+j)==puntoy1)
+%            valor1X=i
+%            valor1Y=j
+%         end
+%         if(rc(i)==puntox2 & rc(dimen(1)+j)==puntoy2)
+%            valor2X=i
+%            valor2Y=j
+%         end
+%     end
+% end
+d=size(im_skel);
+punto1=[puntox1,puntoy1];
+punto2=[puntox2,puntoy2];
+
+for(i=1:dimen(1))
+    im_skel=separar(punto1,punto2,im_skel);
+end
+    
+im_caminos = bitand(im_bw,imcomplement(im_skel));
+% for(i=1:d(1))
+%     for(j=1:d(2))
+%         if(im_skel(i,j)==1)
+%             if(puntox1==j & puntoy1==i)
+%                 punto1=[puntox1 puntoy1]
+%             end
+%             if(puntox2==j & puntoy2==i)
+%                 punto2=[puntox2 puntoy2]
+%             end
+%             if(punto1(1)~=0 & punto1(2)~=0 & punto2(1)~=0 & punto2(2)~=0)
+% %                 separar(punto1,punto2,im_skel);
+%             end
+%         end
+%     end
+% end
+
+% im_endpoints = bwmorph(im_skel,'endpoints');
+% figure()
+% imshow(im_endpoints);
+% 
+% im_branchpoint= bwmorph(im_skel,'branchpoints');
+% figure()
+% imshow(im_branchpoint);
+% 
+% im_branch =bwmorph(im_skel-im_branchpoint,'branchpoints');
+% figure()
+% imshow(im_skel-im_branch-im_branchpoint);
+
 figure()
 imshow(im_caminos)
 x = [x1 puntox1];
@@ -110,6 +170,24 @@ im_endpoints = bwmorph(imagen,'endpoints');
                     if  (im_endpoints(R,C)==1 & im_endpoints(R,C)~=img_branch(R,C))
                          pend = [pend; R,C];
                          imagen(R,C)=0;
+                    end
+        end 
+    end
+end
+
+function im_skel = separar(punto1,punto2,im_skel)
+dimen = size(im_skel);
+im_endpoints = bwmorph(im_skel,'endpoints');
+    for R = 1:dimen(1)
+        for C = 1:dimen(2)
+                    if  (im_endpoints(R,C)==1)
+                         im_skel(R,C)=0;
+                         if(im_skel(punto1(2),punto1(1))==0)
+                             im_skel(punto1(2),punto1(1))=1;
+                         end
+                         if(im_skel(punto2(2),punto2(1))==0)
+                             im_skel(punto2(2),punto2(1))=1;
+                         end
                     end
         end 
     end
